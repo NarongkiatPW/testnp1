@@ -14,7 +14,7 @@ st.write(
 
 # Function for connecting to Druid
 def create_connection():
-    conn = connect(host='13.229.87.146', port=8099, path='/query/sql', scheme='http')
+    conn = connect(host='13.212.62.78', port=8099, path='/query/sql', scheme='http')
     return conn
 
 # สร้างการเชื่อมต่อกับ Druid
@@ -47,6 +47,8 @@ fig1 = go.Figure(
         x=df1["Transaction_Count"],
         y=df1["userid"],
         orientation='h',  # Horizontal bar chart
+        text=df1["Transaction_Count"],  # Display amount as text
+        textposition='outside',  # Position text outside the bars  
     )
 )
 
@@ -87,7 +89,9 @@ fig2 = go.Figure(
     go.Bar(
         x=df2["Transaction_Count"],
         y=df2["userid"],
-        orientation='h',  # Horizontal bar chart
+        orientation='h', # Horizontal bar chart
+        text=df2["Transaction_Count"],  # Display amount as text
+        textposition='outside',  # Position text outside the bars  
     )
 )
 
