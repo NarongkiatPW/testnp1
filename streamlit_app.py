@@ -97,7 +97,7 @@ fig1 = go.Figure(
         textposition='outside',  # Position text outside the bars 
         marker=dict(
             color=df1["Transaction_Count"],  # Use Transaction_Count for color mapping
-            colorscale=autumn_colorscale    # Apply the autumn color scale
+            colorscale=px.colors.sequential.Cividis_r    # Apply the autumn color scale
         ) 
     )
 )
@@ -141,7 +141,11 @@ fig2 = go.Figure(
         y=df2["userid"],
         orientation='h', # Horizontal bar chart
         text=df2["Transaction_Count"],  # Display amount as text
-        textposition='outside',  # Position text outside the bars  
+        textposition='outside',  # Position text outside the bars
+        marker=dict(
+            color=df2["Transaction_Count"],  # Use Transaction_Count for color mapping
+            colorscale=px.colors.sequential.Cividis_r    # Apply the autumn color scale
+        )  
     )
 )
 
@@ -176,18 +180,17 @@ result3 = curs3.fetchall()
 df3 = pd.DataFrame(result3, columns=['symbol', 'user_count'])
 # print(df3)
 
-# Create a horizontal bar chart
 fig3 = go.Figure(
     go.Bar(
         x=df3["user_count"],
         y=df3["symbol"],
         orientation='h',  # Horizontal bar chart
         marker=dict(
-        color=df3["user_count"],  # Use user_count to vary the color
-        colorscale="YlOrBr"  # Yellow autumn-like gradient
+            color=df3["user_count"],  # Use user_count for color mapping
+            colorscale=px.colors.sequential.Cividis_r  # Use the Cividis_r colorscale
         ),
-        text=df2["Transaction_Count"],  # Display amount as text
-        textposition='outside',  # Position text outside the bars
+        text=df3["user_count"],  # Display user_count as text
+        textposition='outside'  # Position text outside the bars
     )
 )
 
