@@ -3,6 +3,7 @@ import pandas as pd
 from pinotdb import connect
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
+import plotly.express as px
 
 st.title("✨ Stock-Trade User Interactions")
 st.write(
@@ -19,6 +20,51 @@ def create_connection():
 
 # สร้างการเชื่อมต่อกับ Druid
 conn = create_connection()
+
+### Qurey 4 
+query4 = """
+SELECT 
+    gender,
+    regionid
+FROM 
+    users_table;
+"""
+curs4 = conn.cursor()
+curs4.execute(query4)
+result4 = curs4.fetchall()
+df4 = pd.DataFrame(result4, columns=['gender', 'regionid'])
+
+# Group data to count occurrences of gender-region combinations
+heatmap_data4 = df4.groupby(["gender", "regionid"]).size().reset_index(name="count")
+
+# Pivot the data to create a matrix for the heatmap
+heatmap_matrix4 = heatmap_data4.pivot(index="gender", columns="regionid", values="count").fillna(0)
+
+# Create the heatmap
+fig4 = go.Figure(
+    data=go.Heatmap(  # Use 'data' instead of 'data4'
+        z=heatmap_matrix4.values,  # Heatmap values
+        x=heatmap_matrix4.columns,  # Regions on the X-axis
+        y=heatmap_matrix4.index,  # Genders on the Y-axis
+        colorscale=px.colors.sequential.Cividis_r  # Reverse Cividis color scheme
+    )
+)
+
+# Customize layout
+fig4.update_layout(
+    title="User Distribution by Gender and Region",
+    xaxis_title="Region",
+    yaxis_title="Gender"
+)
+
+# Display the heatmap in Streamlit
+st.plotly_chart(fig4)
+
+autumn_colorscale = [
+    [0.0, "yellow"],  # Start with yellow
+    [0.5, "orange"],  # Transition to orange
+    [1.0, "red"]      # End with red
+]
 
 ## Query 1 Transaction count by Stock
 query1 = """
@@ -48,7 +94,11 @@ fig1 = go.Figure(
         y=df1["userid"],
         orientation='h',  # Horizontal bar chart
         text=df1["Transaction_Count"],  # Display amount as text
-        textposition='outside',  # Position text outside the bars  
+        textposition='outside',  # Position text outside the bars 
+        marker=dict(
+            color=df1["Transaction_Count"],  # Use Transaction_Count for color mapping
+            colorscale=autumn_colorscale    # Apply the autumn color scale
+        ) 
     )
 )
 
@@ -132,6 +182,12 @@ fig3 = go.Figure(
         x=df3["user_count"],
         y=df3["symbol"],
         orientation='h',  # Horizontal bar chart
+        marker=dict(
+        color=df3["user_count"],  # Use user_count to vary the color
+        colorscale="YlOrBr"  # Yellow autumn-like gradient
+        ),
+        text=df2["Transaction_Count"],  # Display amount as text
+        textposition='outside',  # Position text outside the bars
     )
 )
 
